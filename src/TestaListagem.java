@@ -6,7 +6,7 @@ import java.sql.Statement;
 public class TestaListagem {
 	public static void main(String[] args) throws SQLException {
 		
-		CriaConexao criaConexao = new CriaConexao();
+		ConnectionFactory criaConexao = new ConnectionFactory();
 		Connection connection = criaConexao.RecuperarConexao();
 		
 		Statement stm = connection.createStatement();
