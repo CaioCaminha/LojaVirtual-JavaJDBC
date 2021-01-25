@@ -11,7 +11,7 @@ public class TestaInsercao {
 		
 		ConnectionFactory factory = new ConnectionFactory();
 		Connection connection = factory.RecuperarConexao();
-		
+		//evita SQL Injections
 		PreparedStatement stm = connection.prepareStatement("INSERT INTO PRODUTO (nome, descricao)VALUES(?, ?)"
 				,Statement.RETURN_GENERATED_KEYS);
 		stm.setString(1, Nome);
