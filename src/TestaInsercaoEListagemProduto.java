@@ -4,7 +4,7 @@ import java.sql.Connection;
 
 public class TestaInsercaoEListagemProduto {
 	public static void main(String[] args) throws SQLException{
-		Produto armario = new Produto("celular", "Iphone 12");
+		Produto armario = new Produto("televisao", "Iphone 12");
 		
 		try(Connection connection = new ConnectionFactory().RecuperarConexao()){
 			ProdutoDAO produtoDao = new ProdutoDAO(connection);
