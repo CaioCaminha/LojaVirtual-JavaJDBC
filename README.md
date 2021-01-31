@@ -1,30 +1,23 @@
 # LojaVirtual-JavaJDBCAULA 1:
 
-//Imports das classes que vão ser responsáveis pela connection, o gerenciador de drivers SQL e as exceptions SQL
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 
 
-public class TestaConexão {
+
+	public class TestaConexão {
 	public static void main(String[] args) throws SQLException {
-        //intancia o objeto DriveManager que vai receber => url, root, password
 		Connection connection = DriverManager
 				.getConnection("jdbc:mysql://localhost/loja_virtual?useTimezone=true&serverTimezone=UTC", "root", "caminha123");
 		System.out.println("Conexão Estabelecida");
-        //fecha a conexão
 		connection.close();
 	}
-}
-//Os comandos SQL(SELECT, CREATE, UPDATE) são nomeados no java como STATEMENT e nomeiam a interface Statement
-Statement stm = con.createStatement();
-//O metodo execute recebe o código SQL a ser executado
+	}
+	Statement stm = con.createStatement();
+
 		stm.execute("SELECT ID, NOME, DESCRICAO FROM PRODUTO");
-		//A interfaçe ResultSte premite pegar o resultado do comando sql acima
+		
 		ResultSet rst = stm.getResultSet();
-		//é criado uma laço, no qual o rst será incrementado com o .next() que pulará de registro em registro
-        //onde serão guardados em variáveis os registros capturados do bd, de acordo com seus respectivos tipos
+		
 		while(rst.next()) {
 			Integer id = rst.getInt("ID");
 			System.out.println(id);
@@ -34,7 +27,7 @@ Statement stm = con.createStatement();
 			System.out.println(descricao);
  		}
 
-public class TestaInsercao {
+	public class TestaInsercao {
 	public static void main(String[] args) throws  SQLException{
 		ConnectionFactory factory = new ConnectionFactory();
 		//connection extende o AutoClosable, entao ao fechar o try, o connection tambem será fechado
@@ -62,9 +55,9 @@ public class TestaInsercao {
 			connection.rollback();
 		}
 	}
-}
+	}
 
-private static void adicionarVariavel(String nome, String descricao, PreparedStatement stm) throws SQLException{
+	private static void adicionarVariavel(String nome, String descricao, PreparedStatement stm) throws SQLException{
 	stm.setString(1, nome);
 	stm.setString(2, descricao);
 	
@@ -80,25 +73,25 @@ private static void adicionarVariavel(String nome, String descricao, PreparedSta
 		System.out.println(id);
 	}
 	}
-}
+	}
 
-}
-//A DAO do modelo produto
-//DAO => Data Access Object
-package br.com.alura.jdbc.dao;
+	}
+	//A DAO do modelo produto
+	//DAO => Data Access Object
+	package br.com.alura.jdbc.dao;
 
-import java.sql.Connection; 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+	import java.sql.Connection; 
+	import java.sql.PreparedStatement;
+	import java.sql.ResultSet;
+	import java.sql.SQLException;
+	import java.sql.Statement;
+	import java.util.ArrayList;
+	import java.util.List;
 
-import br.com.alura.jdbc.modelo.Categoria;
-import br.com.alura.jdbc.modelo.Produto;
+	import br.com.alura.jdbc.modelo.Categoria;
+	import br.com.alura.jdbc.modelo.Produto;
 
-public class ProdutoDAO {
+	public class ProdutoDAO {
 
 	private Connection connection;
 
@@ -210,20 +203,20 @@ public class ProdutoDAO {
 			}
 		}
 	}
-}
-//A controller da DAO Produto
-//Controller é responsavel por fazer a conexão entre o front e a DAO, instanciando as connections e deixando o front apenas com as requisiçãos
-package br.com.alura.jdbc.controller;
+	}
+	//A controller da DAO Produto
+	//Controller é responsavel por fazer a conexão entre o front e a DAO, instanciando as connections e deixando o front apenas com as requisiçãos
+	package br.com.alura.jdbc.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.sql.Connection;
+	import java.util.ArrayList;
+	import java.util.List;
+	import java.sql.Connection;
 
-import br.com.alura.jdbc.dao.ProdutoDAO;
-import br.com.alura.jdbc.modelo.Produto;
-import br.com.alura.jdbc.factory.ConnectionFactory;
+	import br.com.alura.jdbc.dao.ProdutoDAO;
+	import br.com.alura.jdbc.modelo.Produto;
+	import br.com.alura.jdbc.factory.ConnectionFactory;
 
-public class ProdutoController {
+	public class ProdutoController {
 	
 	private ProdutoDAO produtoDAO;
 	public ProdutoController() {
@@ -247,4 +240,40 @@ public class ProdutoController {
 	public void alterar(String nome, String descricao, Integer id) {
 		this.alterar(nome, descricao, id);
 	}
-}
+	}
+Ao se trabalhar com uma connection, é recomendado que se use uma ConnectionFactory, uma classe responsável apenas pela criação da conexão com o Banco de Dados, no caso pode ser usado um driver que conectará a aplicação ao Banco de dados, nesta aplicação foi usado o c3p0, um driver que permite padronizar as configurações do jdbc, como jdbcurl, user, password, dentre outras, e também que permite configurar o pool de conexões, ou seja, o número de conexões estabelecidas com o BD, evitando que muitas conexões sejam abertas ou que um numero muito pequeno seja criado, o driver usa a interface DataSource, que permite fazer a interação entre a aplicação e os drivers de pool, que tem como um de seus metodos o mesmo getConnection(); usado para estabelecer conexão com o BD.
+				
+
+	import java.util.ArrayList;
+	import java.util.List;
+	import java.sql.Connection;
+
+	import br.com.alura.jdbc.dao.ProdutoDAO;
+	import br.com.alura.jdbc.modelo.Produto;
+	import br.com.alura.jdbc.factory.ConnectionFactory;
+
+	public class ProdutoController {
+	
+	private ProdutoDAO produtoDAO;
+	public ProdutoController() {
+		Connection connection =
+				new ConnectionFactory().recuperarConexao();
+		this.produtoDAO = new ProdutoDAO(connection);
+	}
+
+	public void deletar(Integer id) {
+		this.produtoDAO.deletar(id);
+	}
+
+	public void salvar(Produto produto) {
+		this.produtoDAO.salvar(produto);
+	}
+
+	public List<Produto> listar() {
+		return this.produtoDAO.listar();
+	}
+
+	public void alterar(String nome, String descricao, Integer id) {
+		this.alterar(nome, descricao, id);
+	}
+	}
